@@ -14,7 +14,7 @@ const namegroup = async (req, res, next) => {
         const group = await Group.create({ groupName });
 
         // Update UserGroup table with the new group and user ID
-        await UserGroup.create({ userId: userId, groupId: group.id });
+        await UserGroup.create({ userId: userId, groupId: group.id ,isAdmin : true });
 
         // Send a success response
         res.status(201).json({
