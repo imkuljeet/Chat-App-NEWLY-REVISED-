@@ -195,6 +195,26 @@ async function displayGroups(token) {
     groupHeader.textContent = group.groupName;
     groupElement.appendChild(groupHeader);
 
+    // Create the additional button and initially hide it
+    let additionalButton = document.createElement("button");
+    additionalButton.textContent = "Delete Group"; // You can rename it later
+    additionalButton.classList.add("additional-button");
+    additionalButton.style.display = "none"; // Initially hide the button
+    groupElement.appendChild(additionalButton);
+
+    // Add event listener for the additional button
+    additionalButton.addEventListener("click", async() => {
+      try{
+        const token = localStorage.getItem('token');
+        let response = await axios.delete(`http://localhost:3000/admin/delete-group/${group.id}`,{ headers : { "Authorization" : token }});
+
+         alert(`${group.groupName} : ${response.data.message}`);
+
+      }catch(err){
+        console.log(err);
+      }
+    });
+
     // Create a ul for the group's messages
     let messageUl = document.createElement("ul");
     messageUl.id = `messageul-${group.id}`;
@@ -250,13 +270,15 @@ async function displayGroups(token) {
       document.querySelectorAll(".show-members-button").forEach((button) => {
         button.style.display = "none";
       });
+      document.querySelectorAll(".additional-button").forEach((button) => {
+        button.style.display = "none";
+      });
 
-      // Show the message ul and member div for the clicked group
+      // Show the message ul, member div, and additional button for the clicked group
       messageUl.style.display = "block";
       memberDiv.style.display = "block";
-
-      // Show the "Show Members" button for the clicked group
       showMembersButton.style.display = "block";
+      additionalButton.style.display = "block";
 
       // Fetch and display messages for the group
       fetchAndDisplayMessages(group.id, token);

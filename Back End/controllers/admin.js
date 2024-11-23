@@ -89,5 +89,25 @@ const removeUser = async (req, res, next) => {
     }
 };
 
+const deleteGroup = async (req, res, next) => {
+    try {
+        const { groupId } = req.params;
+        console.log("GROUP ID>>>", groupId);
 
-module.exports = { makeAdmin , removeUser };
+        // Delete the group from the Group table
+        await Group.destroy({ where: { id : groupId }});
+
+        // // Delete associated entries from the UserGroup table
+        await UserGroup.destroy({ where: { groupId }});
+
+        // Send a success response to the client
+        res.status(200).json({ message: 'Group deleted successfully' });
+    } catch (error) {
+        console.error(error);
+
+        // Send an error response to the client
+        res.status(500).json({ message: 'An error occurred while deleting the group' });
+    }
+};
+
+module.exports = { makeAdmin , removeUser , deleteGroup };
