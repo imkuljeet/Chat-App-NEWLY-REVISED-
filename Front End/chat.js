@@ -81,7 +81,10 @@ async function fetchMessages() {
         }
       }
       
-      show(messages);
+      // show(messages);
+      let storedMessageFromLS = localStorage.getItem('messagesStored');
+      let parsedMsgs = JSON.parse(storedMessageFromLS);
+      show(parsedMsgs);
     }
 
     // console.log("Messages all are>>>>", response);
