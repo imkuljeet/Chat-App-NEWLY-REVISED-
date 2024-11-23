@@ -9,6 +9,7 @@ const app = express();
 const userRoutes = require("./routes/user");
 const messageRoutes = require("./routes/message");
 const groupRoutes = require("./routes/group");
+const adminRoutes = require("./routes/admin");
 
 const User = require("./models/users");
 const Message = require("./models/messages");
@@ -21,6 +22,7 @@ app.use(bodyParser.json());
 app.use("/user", userRoutes);
 app.use("/message", messageRoutes);
 app.use("/group", groupRoutes);
+app.use("/admin",adminRoutes);
 
 // User.hasMany(Message);
 // Message.belongsTo(User);

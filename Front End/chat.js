@@ -329,16 +329,33 @@ async function fetchAndDisplayMembers(groupId, token) {
 
     members.forEach((member) => {
       let memberElement = document.createElement("div");
-      memberElement.innerHTML = `${member.user.name} (${member.user.email})<button class="make-admin-btn">Make Admin</button>`;
+      memberElement.innerHTML = `${member.user.name} (${member.user.email})`;
+  
+      // Only append the "Make Admin" button if the member is not already an admin
+      if (!member.isAdmin) {
+          memberElement.innerHTML += `<button class="make-admin-btn">Make Admin</button>`;
+      }
+  
       memberDiv.appendChild(memberElement);
   
+      // Add event listener only if the button exists
       let makeAdminButton = memberElement.querySelector(".make-admin-btn");
-      makeAdminButton.addEventListener("click", () => {
-          // Add your code to make the member an admin here
-          console.log(`Making ${member.user.name} an admin`);
-      });
+      if (makeAdminButton) {
+          makeAdminButton.addEventListener("click", async () => {
+              console.log(`Making ${member.user.name} an admin`);
+              try {
+                  let groupId = localStorage.getItem('selectedGroupId');
+                  let token = localStorage.getItem('token');
+                  const response = await axios.post(`http://localhost:3000/admin/make-admin`, { member }, {
+                      headers: { Authorization: token }
+                  });
+                  console.log(response.data);
+              } catch (error) {
+                  console.error("There was an error making the user an admin:", error);
+              }
+          });
+      }
   });
-  
   
   } catch (err) {
     console.error("Error fetching group members:", err);
