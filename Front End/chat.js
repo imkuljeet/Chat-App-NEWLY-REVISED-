@@ -20,7 +20,7 @@ async function sendMessage() {
   let message = document.getElementById("messageInput").value;
   try {
     let token = localStorage.getItem("token");
-    let groupId = localStorage.getItem('selectedGroupId');
+    let groupId = localStorage.getItem("selectedGroupId");
     let storedMsgsInLS = localStorage.getItem("messagesStored");
     let parsedLSMsgs = JSON.parse(storedMsgsInLS) || [];
 
@@ -198,23 +198,23 @@ async function displayGroups(token) {
     // Create a ul for the group's messages
     let messageUl = document.createElement("ul");
     messageUl.id = `messageul-${group.id}`;
-    messageUl.style.display = 'none'; // Initially hide all message uls
+    messageUl.style.display = "none"; // Initially hide all message uls
     groupElement.appendChild(messageUl);
 
     // Create a div for group members
     let memberDiv = document.createElement("div");
     memberDiv.id = `memberDiv-${group.id}`;
-    memberDiv.style.display = 'none'; // Initially hide all member divs
+    memberDiv.style.display = "none"; // Initially hide all member divs
     groupElement.appendChild(memberDiv);
 
     // Create the "Show Members" button and initially hide it
     let showMembersButton = document.createElement("button");
     showMembersButton.textContent = "Show Members";
     showMembersButton.classList.add("show-members-button");
-    showMembersButton.style.display = 'none'; // Initially hide the button
+    showMembersButton.style.display = "none"; // Initially hide the button
     showMembersButton.addEventListener("click", async () => {
       await fetchAndDisplayMembers(group.id, token);
-      memberDiv.style.display = 'block'; // Show the member div when button is clicked
+      memberDiv.style.display = "block"; // Show the member div when button is clicked
     });
     groupElement.appendChild(showMembersButton);
 
@@ -230,7 +230,7 @@ async function displayGroups(token) {
       addButton.classList.add("add-member-button");
       addButton.addEventListener("click", () => {
         alert(`Add member to group: ${group.groupName}`);
-        
+
         // Redirect to the Add Member page with the group's ID
         window.location.href = `./addMembers.html?groupId=${group.id}`;
       });
@@ -238,29 +238,28 @@ async function displayGroups(token) {
       groupElement.appendChild(addButton);
 
       // Store the selected groupId in localStorage
-      localStorage.setItem('selectedGroupId', group.id);
+      localStorage.setItem("selectedGroupId", group.id);
 
       // Hide all message uls and member divs
-      document.querySelectorAll('.group-item ul').forEach((ul) => {
-        ul.style.display = 'none';
+      document.querySelectorAll(".group-item ul").forEach((ul) => {
+        ul.style.display = "none";
       });
-      document.querySelectorAll('.group-item div').forEach((div) => {
-        div.style.display = 'none';
+      document.querySelectorAll(".group-item div").forEach((div) => {
+        div.style.display = "none";
       });
-      document.querySelectorAll('.show-members-button').forEach((button) => {
-        button.style.display = 'none';
+      document.querySelectorAll(".show-members-button").forEach((button) => {
+        button.style.display = "none";
       });
 
       // Show the message ul and member div for the clicked group
-      messageUl.style.display = 'block';
-      memberDiv.style.display = 'block';
+      messageUl.style.display = "block";
+      memberDiv.style.display = "block";
 
       // Show the "Show Members" button for the clicked group
-      showMembersButton.style.display = 'block';
+      showMembersButton.style.display = "block";
 
       // Fetch and display messages for the group
       fetchAndDisplayMessages(group.id, token);
-      
     });
   });
 }
@@ -278,9 +277,12 @@ async function fetchGroupsByUserId(token) {
 }
 async function fetchAndDisplayMessages(groupId, token) {
   try {
-    let response = await axios.get(`http://localhost:3000/message/getGroupMessages/${groupId}`, {
-      headers: { Authorization: token }
-    });
+    let response = await axios.get(
+      `http://localhost:3000/message/getGroupMessages/${groupId}`,
+      {
+        headers: { Authorization: token },
+      }
+    );
 
     let messages = response.data.messages;
     let currentUserId = jwt_decode(token).userId; // Assuming token contains userId
@@ -292,7 +294,7 @@ async function fetchAndDisplayMessages(groupId, token) {
 
 function displayMessages(messages, currentUserId, groupId) {
   let ul = document.getElementById(`messageul-${groupId}`);
-  
+
   // Check if ul element exists
   if (!ul) {
     console.error(`Element with ID messageul-${groupId} not found`);
@@ -319,9 +321,12 @@ function displayMessages(messages, currentUserId, groupId) {
 
 async function fetchAndDisplayMembers(groupId, token) {
   try {
-    let response = await axios.get(`http://localhost:3000/group/getGroupMembers/${groupId}`, {
-      headers: { Authorization: token }
-    });
+    let response = await axios.get(
+      `http://localhost:3000/group/getGroupMembers/${groupId}`,
+      {
+        headers: { Authorization: token },
+      }
+    );
 
     let members = response.data.groupMembers;
     let memberDiv = document.getElementById(`memberDiv-${groupId}`);
@@ -330,33 +335,60 @@ async function fetchAndDisplayMembers(groupId, token) {
     members.forEach((member) => {
       let memberElement = document.createElement("div");
       memberElement.innerHTML = `${member.user.name} (${member.user.email})`;
-  
-      // Only append the "Make Admin" button if the member is not already an admin
+
       if (!member.isAdmin) {
-          memberElement.innerHTML += `<button class="make-admin-btn">Make Admin</button>`;
+        memberElement.innerHTML += `<button class="make-admin-btn">Make Admin</button><button class="remove-user-btn">Remove User</button>`;
       }
-  
+
       memberDiv.appendChild(memberElement);
-  
-      // Add event listener only if the button exists
+
+      // Add event listener for "Make Admin" button
       let makeAdminButton = memberElement.querySelector(".make-admin-btn");
       if (makeAdminButton) {
-          makeAdminButton.addEventListener("click", async () => {
-              console.log(`Making ${member.user.name} an admin`);
-              try {
-                  let groupId = localStorage.getItem('selectedGroupId');
-                  let token = localStorage.getItem('token');
-                  const response = await axios.post(`http://localhost:3000/admin/make-admin`, { member }, {
-                      headers: { Authorization: token }
-                  });
-                  console.log(response.data);
-              } catch (error) {
-                  console.error("There was an error making the user an admin:", error);
+        makeAdminButton.addEventListener("click", async () => {
+          console.log(`Making ${member.user.name} an admin`);
+          try {
+            let groupId = localStorage.getItem("selectedGroupId");
+            let token = localStorage.getItem("token");
+            const response = await axios.post(
+              `http://localhost:3000/admin/make-admin`,
+              { member },
+              {
+                headers: { Authorization: token },
               }
-          });
+            );
+            console.log(response.data);
+          } catch (error) {
+            console.error(
+              "There was an error making the user an admin:",
+              error
+            );
+          }
+        });
       }
-  });
-  
+
+      // Add event listener for "Remove User" button
+      let removeUserButton = memberElement.querySelector(".remove-user-btn");
+      if (removeUserButton) {
+        removeUserButton.addEventListener("click", async () => {
+          console.log(`Removing ${member.user.name} from the group`);
+          try {
+            // let groupId = localStorage.getItem("selectedGroupId");
+            let token = localStorage.getItem("token");
+            const response = await axios.post(
+              `http://localhost:3000/admin/remove-user`,
+              { member },
+              {
+                headers: { Authorization: token },
+              }
+            );
+            console.log(response.data);
+          } catch (error) {
+            console.error("There was an error removing the user:", error);
+          }
+        });
+      }
+    });
   } catch (err) {
     console.error("Error fetching group members:", err);
   }

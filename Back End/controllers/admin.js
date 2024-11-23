@@ -8,6 +8,12 @@ const makeAdmin = async (req, res, next) => {
 
         console.log("AHHHA??>>>", userId, groupId, isAdmin);
 
+         // Check if the requesting user is an admin
+         const requestingUserGroup = await UserGroup.findOne({ where: { userId: req.user.id, groupId } });
+         if (!requestingUserGroup || !requestingUserGroup.isAdmin) {
+             return res.status(403).json({ message: 'You do not have permission to make admin' });
+         }
+
         // Check if the user exists
         const user = await User.findByPk(userId);
         if (!user) {
@@ -42,4 +48,46 @@ const makeAdmin = async (req, res, next) => {
     }
 };
 
-module.exports = { makeAdmin };
+
+const removeUser = async (req, res, next) => {
+    try {
+        const { userId, groupId, isAdmin } = req.body.member;
+
+        console.log("Removing User:", userId, groupId, isAdmin);
+
+        // Check if the requesting user is an admin
+        const requestingUserGroup = await UserGroup.findOne({ where: { userId: req.user.id, groupId } });
+        if (!requestingUserGroup || !requestingUserGroup.isAdmin) {
+            return res.status(403).json({ message: 'You do not have permission to remove users from this group' });
+        }
+
+        // Check if the user exists
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Check if the group exists
+        const group = await Group.findByPk(groupId);
+        if (!group) {
+            return res.status(404).json({ message: 'Group not found' });
+        }
+
+        // Check if the user is a member of the group
+        const userGroup = await UserGroup.findOne({ where: { userId, groupId } });
+        if (!userGroup) {
+            return res.status(404).json({ message: 'User is not a member of the group' });
+        }
+
+        // Remove the user from the group
+        await userGroup.destroy();
+
+        return res.status(200).json({ message: 'User has been removed from the group' });
+    } catch (error) {
+        console.error("There was an error removing the user from the group:", error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+
+module.exports = { makeAdmin , removeUser };
