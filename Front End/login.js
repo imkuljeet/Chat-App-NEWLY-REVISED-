@@ -14,6 +14,7 @@ document.getElementById("login").addEventListener("submit", async (event) => {
   
       if (response.status === 200) {
         alert(response.data.message);
+        window.location.href = "./chat.html"
       } else {
         throw new Error(response.data.message);
       }
