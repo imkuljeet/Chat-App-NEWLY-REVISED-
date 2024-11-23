@@ -191,13 +191,14 @@ async function displayGroups(token) {
     groupElement.classList.add("group-item");
 
     // Create a header for the group name
-    let groupHeader = document.createElement("h2");
+    let groupHeader = document.createElement("h4");
     groupHeader.textContent = group.groupName;
     groupElement.appendChild(groupHeader);
 
     // Create a ul for the group's messages
     let messageUl = document.createElement("ul");
     messageUl.id = `messageul-${group.id}`;
+    messageUl.style.display = 'none'; // Initially hide all message uls
     groupElement.appendChild(messageUl);
 
     groupContainer.appendChild(groupElement);
@@ -221,10 +222,18 @@ async function displayGroups(token) {
 
       // Store the selected groupId in localStorage
       localStorage.setItem('selectedGroupId', group.id);
-    });
 
-    // Fetch and display messages for the group
-    fetchAndDisplayMessages(group.id, token);
+      // Hide all message uls
+      document.querySelectorAll('.group-item ul').forEach((ul) => {
+        ul.style.display = 'none';
+      });
+
+      // Show the message ul for the clicked group
+      messageUl.style.display = 'block';
+
+      // Fetch and display messages for the group
+      fetchAndDisplayMessages(group.id, token);
+    });
   });
 }
 
