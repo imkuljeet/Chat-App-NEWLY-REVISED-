@@ -181,10 +181,30 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function displayGroups(token) {
   let groups = await fetchGroups(token);
   let groupContainer = document.getElementById("groupContainer");
+
   groups.forEach((group) => {
     let groupElement = document.createElement("div");
     groupElement.textContent = group.groupName;
+    groupElement.classList.add("group-item");
     groupContainer.appendChild(groupElement);
+
+    groupElement.addEventListener("click", () => {
+      // Remove any existing button from all groups
+      document.querySelectorAll(".add-member-button").forEach((button) => {
+        button.remove();
+      });
+
+      // Create and display the add button for the clicked group
+      let addButton = document.createElement("button");
+      addButton.textContent = "Add Member";
+      addButton.classList.add("add-member-button");
+      addButton.addEventListener("click", () => {
+        alert(`Add member to group: ${group.groupName}`);
+      });
+
+      // Append the button to the clicked group element
+      groupElement.appendChild(addButton);
+    });
   });
 }
 
