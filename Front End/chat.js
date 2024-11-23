@@ -42,9 +42,6 @@ async function fetchMessages() {
       { headers: { Authorization: token } }
     );
 
-    let ul = document.getElementById("messageul");
-    ul.innerHTML = ""; // Clear existing messages
-
     if (response.status === 200) {
       let newMessages = response.data.messages;
 
@@ -53,7 +50,7 @@ async function fetchMessages() {
 
       let mergedMessages = [...parsedLSMsgs, ...newMessages];
 
-      localStorage.setItem("lastMsgId", newMessages[newMessages.length - 1].id);
+      localStorage.setItem("lastMsgId", newMessages.length > 0 ? newMessages[newMessages.length - 1].id : lastMsgId);
       localStorage.setItem('messagesStored', JSON.stringify(mergedMessages));
 
       displayMessages(mergedMessages, currentUserId);
@@ -81,6 +78,13 @@ function displayMessages(messages, currentUserId) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+  let storedMsgsInLS = localStorage.getItem('messagesStored');
+  let parsedLSMsgs = JSON.parse(storedMsgsInLS) || [];
+  let token = localStorage.getItem("token");
+  let decodedToken = jwt_decode(token);
+  let currentUserId = decodedToken.userId;
+
+  displayMessages(parsedLSMsgs, currentUserId);
   await fetchMessages();
   // Uncomment the line below to refresh messages every second
   // setInterval(fetchMessages, 1000);
