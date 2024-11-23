@@ -6,6 +6,13 @@ const sequelize = require("./util/database");
 
 const app = express();
 
+const http = require("http");
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server, {
+  cors : { origin : "*"}
+})
+
 const userRoutes = require("./routes/user");
 const messageRoutes = require("./routes/message");
 const groupRoutes = require("./routes/group");
@@ -16,7 +23,7 @@ const Message = require("./models/messages");
 const Group = require("./models/groups");
 const UserGroup = require("./models/usergroup");
 
-app.use(cors());
+app.use(cors({ origin : "*"}));
 app.use(bodyParser.json());
 
 app.use("/user", userRoutes);
@@ -45,7 +52,21 @@ Group.hasMany(UserGroup, { foreignKey: "groupId" });
 sequelize
   .sync()
   .then(() => {
-    app.listen(3000);
+    server.listen(3000);
+
+    io.on('connection',(socket)=>{
+      console.log("user connected");
+      
+      socket.on('send-message',(msg,id)=>{
+        console.log("groupid : ",id);
+        console.log("Received message : ",msg);
+
+        io.emit('recdMsg',id);
+      })
+      socket.on('disconnect',()=>{
+        console.log('user disconnected');
+      });
+    })
   })
   .catch((err) => {
     console.log(err);

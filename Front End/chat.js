@@ -1,3 +1,21 @@
+const baseURL = 'http://localhost:3000';
+
+const socket = io(baseURL);
+
+socket.on('connect',()=>{
+  console.log("Server is printing on to the client side",socket.id)
+})
+
+const groupId = localStorage.getItem('selectedGroupId');
+socket.emit('joinRoom', groupId);
+socket.on('recdMsg',(id)=>{
+  console.log(id);
+
+  fetchAndDisplayMessages(id);
+
+})
+
+
 document.getElementById("sendMessage").addEventListener("click", async (e) => {
   e.preventDefault();
   await sendMessage();
@@ -30,6 +48,10 @@ async function sendMessage() {
       { headers: { Authorization: token } }
     );
     // Update the firstMsgId to the earliest message fetched
+
+    socket.emit('send-message',message,groupId);
+
+    
     if (parsedLSMsgs.length > 0) {
       let firstMsgId = parsedLSMsgs[0].id;
       localStorage.setItem("firstMsgId", firstMsgId);
@@ -312,6 +334,7 @@ async function fetchGroupsByUserId(token) {
 }
 async function fetchAndDisplayMessages(groupId, token) {
   try {
+    const token = localStorage.getItem('token');
     let response = await axios.get(
       `http://localhost:3000/message/getGroupMessages/${groupId}`,
       {
