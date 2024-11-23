@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Member</title>
+</head>
+<body>
+    <form id="add-member-form">
+        <label for="email">Enter email:</label>
+        <input type="email" id="email" name="email" required>
+        <input type="hidden" id="groupId" name="groupId"> <!-- Hidden input to store groupId -->
+        <button type="submit">Add Member</button>
+    </form>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+    <script>
+        // Get groupId from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const groupId = urlParams.get('groupId');
+        document.getElementById('groupId').value = groupId; // Set the hidden input value
+
+        document.getElementById("add-member-form").addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            let email = e.target.email.value;
+            let token = localStorage.getItem('token');
+            let groupId = e.target.groupId.value;
+
+            try {
+                let response = await axios.post("http://localhost:3000/group/add-member", { email, groupId }, { headers: { "Authorization": token } });
+                console.log(response.data);
+                alert("Member Added Successfully");
+            } catch (err) {
+                console.error("Error adding member:", err);
+                alert("Failed to add member. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>
