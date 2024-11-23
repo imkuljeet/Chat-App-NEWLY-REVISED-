@@ -122,4 +122,27 @@ const getGroupMembers = async (req, res) => {
     }
 };
 
-module.exports = { namegroup,addMember, allGroups, getGroupsByUserId,  getGroupMembers };
+const currentUserDetails = async (req, res, next) => {
+    try {
+        // Get the user ID from the request
+        let userId = req.user.id;
+        let { groupId } = req.params;
+
+        // Find the user details from the UserGroup table (or any relevant table)
+        let currentFoundUser = await UserGroup.findOne({ where: { userId, groupId } });
+
+        // Check if the user details are found
+        if (currentFoundUser.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Send the user details as a response
+        res.status(200).json(currentFoundUser);
+    } catch (error) {
+        console.error('Error fetching user details:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+
+module.exports = { namegroup,addMember, allGroups, getGroupsByUserId,  getGroupMembers, currentUserDetails };

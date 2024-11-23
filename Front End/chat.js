@@ -358,24 +358,38 @@ async function fetchAndDisplayMembers(groupId, token) {
   try {
     let token = localStorage.getItem("token");
     let decodedToken = jwt_decode(token);
+    // console.log("DECODEDTOKEM",decodedToken);
     let response = await axios.get(
       `http://localhost:3000/group/getGroupMembers/${groupId}`,
       {
-        headers: { Authorization: token },
+        headers: { "Authorization": token },
       }
     );
+
 
     let members = response.data.groupMembers;
     let memberDiv = document.getElementById(`memberDiv-${groupId}`);
     memberDiv.innerHTML = ""; // Clear any existing members
 
+    let currentUser = await axios.get(
+      `http://localhost:3000/group/get-currentuser/${groupId}`,
+      {
+          headers: { "Authorization": token },
+          // params: { groupId: groupId }
+      }
+  );
+  
+  console.log("CURRENTUSER", currentUser.data.isAdmin);
+  
+   
+
     members.forEach((member) => {
-      // console.log("MEMEBRR>>>",member);
+      console.log("MEMEBRR>>>",member);
       
       let memberElement = document.createElement("div");
       memberElement.innerHTML = `${member.user.name} (${member.user.email})`;
 
-      if (!member.isAdmin && member.userId !== decodedToken.userId) {
+      if (!member.isAdmin && member.userId !== decodedToken.userId ) {
         memberElement.innerHTML += `<button class="make-admin-btn">Make Admin</button><button class="remove-user-btn">Remove User</button>`;
       }
 
