@@ -4,11 +4,11 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
+const userRoutes = require('./routes/user');
+
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use('/user/signup',(req,res,next)=>{
-    console.log(req.body);
-});
+app.use('/user',userRoutes);
 
 app.listen(3000);
