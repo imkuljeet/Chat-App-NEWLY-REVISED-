@@ -1,6 +1,8 @@
 const Message = require("../models/messages");
 let User = require("../models/users");
 const Sequelize = require('sequelize');
+const { Op } = require('sequelize'); 
+// const { Message } = require('../models/messages'); // Adjust the path as necessary
 
 const sendMsg = async (req, res, next) => {
   try {
@@ -55,4 +57,27 @@ async function getMessages(lastMsgId) {
   return newMessages;
 }
 
-module.exports = { sendMsg, fetchMessageByLastMsgId };
+
+const fetchOlderMessages = async (req, res) => {
+  try {
+    const { firstmsgid } = req.query;
+    const messages = await Message.findAll({
+      where: {
+        id: {
+          [Op.lt]: firstmsgid // Fetch messages with id less than the firstmsgid
+        }
+      },
+      order: [['id', 'DESC']], // Sort by id in descending order
+      limit: 20 // You can adjust the limit based on your requirements
+    });
+
+    console.log("OLDMESSAGES>>>",messages);
+
+    res.status(200).json({ messages });
+  } catch (error) {
+    console.error('Error fetching older messages:', error);
+    res.status(500).json({ error: 'Failed to fetch older messages' });
+  }
+};
+
+module.exports = { sendMsg, fetchMessageByLastMsgId, fetchOlderMessages };

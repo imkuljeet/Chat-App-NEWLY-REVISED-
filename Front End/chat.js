@@ -14,11 +14,22 @@ async function sendMessage() {
   let message = document.getElementById("messageInput").value;
   try {
     let token = localStorage.getItem("token");
+    let storedMsgsInLS = localStorage.getItem('messagesStored');
+    let parsedLSMsgs = JSON.parse(storedMsgsInLS) || [];
+
+
     let response = await axios.post(
       "http://localhost:3000/message/send",
       { message },
       { headers: { Authorization: token } }
     );
+     // Update the firstMsgId to the earliest message fetched
+  if (parsedLSMsgs.length > 0) {
+    let firstMsgId = parsedLSMsgs[0].id;
+    localStorage.setItem("firstMsgId", firstMsgId);
+    console.log("FIRSTMSGID set on load:", firstMsgId);
+  }
+
     document.getElementById("messageInput").value = ""; // Clear the input field
   } catch (err) {
     console.error("Error sending message:", err);
@@ -49,14 +60,55 @@ async function fetchMessages() {
       let parsedLSMsgs = JSON.parse(storedMsgsInLS) || [];
 
       let mergedMessages = [...parsedLSMsgs, ...newMessages];
+      let latestFiveMessages = mergedMessages.slice(-5); // Only keep the latest 5 messages
 
       localStorage.setItem("lastMsgId", newMessages.length > 0 ? newMessages[newMessages.length - 1].id : lastMsgId);
-      localStorage.setItem('messagesStored', JSON.stringify(mergedMessages));
+      localStorage.setItem('messagesStored', JSON.stringify(latestFiveMessages));
 
-      displayMessages(mergedMessages, currentUserId);
+      displayMessages(latestFiveMessages, currentUserId);
     }
   } catch (err) {
     console.log(err);
+  }
+}
+
+async function fetchOlderMessages() {
+  try {
+    let token = localStorage.getItem("token");
+    let decodedToken = jwt_decode(token);
+    let currentUserId = decodedToken.userId;
+
+    // Assuming older messages are fetched using a different endpoint or parameter
+    let firstMsgId = localStorage.getItem("firstMsgId") || 0;
+    console.log("FIRSTMSGID>>>",firstMsgId);
+
+    let response = await axios.get(
+      `http://localhost:3000/message/fetchOlderMessages?firstmsgid=${firstMsgId}`,
+      { headers: { Authorization: token } }
+    );
+
+    if (response.status === 200) {
+      let olderMessages = response.data.messages;
+
+      if (olderMessages.length > 0) {
+        // Update the firstMsgId to the earliest message fetched
+        firstMsgId = olderMessages[olderMessages.length - 1].id;
+        // localStorage.setItem("firstMsgId", firstMsgId);
+        console.log("FIRSTMSGID after API call:", firstMsgId);
+      }
+
+      let storedMsgsInLS = localStorage.getItem('messagesStored');
+      let parsedLSMsgs = JSON.parse(storedMsgsInLS) || [];
+
+      let mergedMessages = [...olderMessages, ...parsedLSMsgs];
+      let latestFiveMessages = mergedMessages.slice(-5); // Keep only the latest 5 messages
+
+      localStorage.setItem('messagesStored', JSON.stringify(latestFiveMessages));
+
+      displayMessages(latestFiveMessages, currentUserId);
+    }
+  } catch (err) {
+    console.log("Error fetching older messages:", err);
   }
 }
 
@@ -86,6 +138,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   displayMessages(parsedLSMsgs, currentUserId);
   await fetchMessages();
+
+  // Update the firstMsgId to the earliest message fetched
+  if (parsedLSMsgs.length > 0) {
+    let firstMsgId = parsedLSMsgs[0].id;
+    localStorage.setItem("firstMsgId", firstMsgId);
+    console.log("FIRSTMSGID set on load:", firstMsgId);
+  }
+
+  document.getElementById("getOlderMessages").addEventListener("click", async () => {
+    await fetchOlderMessages();
+  });
   // Uncomment the line below to refresh messages every second
-  // setInterval(fetchMessages, 1000);
+  setInterval(fetchMessages, 1000);
 });
