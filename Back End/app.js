@@ -22,11 +22,20 @@ app.use("/user", userRoutes);
 app.use("/message",messageRoutes);
 app.use('/group',groupRoutes);
 
-User.hasMany(Message);
-Message.belongsTo(User);
+// User.hasMany(Message);
+// Message.belongsTo(User);
+User.hasMany(Message, { foreignKey: 'userId' });
+Message.belongsTo(User, { foreignKey: 'userId' });
 
-User.belongsToMany(Group, { through: UserGroup }); 
-Group.belongsToMany(User, { through: UserGroup });
+// User.belongsToMany(Group, { through: UserGroup }); 
+// Group.belongsToMany(User, { through: UserGroup });
+User.belongsToMany(Group, { through: UserGroup, foreignKey: 'userId' });
+Group.belongsToMany(User, { through: UserGroup, foreignKey: 'groupId' });
+
+Group.hasMany(Message, { foreignKey: 'groupId' });
+Message.belongsTo(Group, { foreignKey: 'groupId' });
+
+
 
 sequelize
   .sync()

@@ -5,10 +5,10 @@ const { Op } = require('sequelize');
 
 const sendMsg = async (req, res, next) => {
   try {
-    const { message } = req.body;
+    const { message,groupId } = req.body;
 
     console.log("MESSAGE", message);
-    await Message.create({ message, userId: req.user.id });
+    await Message.create({ message, userId: req.user.id ,groupId});
 
     res
       .status(201)

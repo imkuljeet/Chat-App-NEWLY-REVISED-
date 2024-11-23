@@ -20,12 +20,13 @@ async function sendMessage() {
   let message = document.getElementById("messageInput").value;
   try {
     let token = localStorage.getItem("token");
+    let groupId = localStorage.getItem('selectedGroupId');
     let storedMsgsInLS = localStorage.getItem("messagesStored");
     let parsedLSMsgs = JSON.parse(storedMsgsInLS) || [];
 
     let response = await axios.post(
       "http://localhost:3000/message/send",
-      { message },
+      { message, groupId },
       { headers: { Authorization: token } }
     );
     // Update the firstMsgId to the earliest message fetched
@@ -178,18 +179,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   // let setId = setInterval(fetchMessages, 1000);
 });
 
+let selectedGroupId;
+
 async function displayGroups(token) {
   let groups = await fetchGroupsByUserId(token);
   let groupContainer = document.getElementById("groupContainer");
+
   groups.forEach((group) => {
     let groupElement = document.createElement("div");
     groupElement.textContent = group.groupName;
     groupElement.classList.add("group-item");
     groupContainer.appendChild(groupElement);
+
     groupElement.addEventListener("click", () => {
       document.querySelectorAll(".add-member-button").forEach((button) => {
         button.remove();
       });
+
       let addButton = document.createElement("button");
       addButton.textContent = "Add Member";
       addButton.classList.add("add-member-button");
@@ -199,7 +205,12 @@ async function displayGroups(token) {
         // Redirect to the Add Member page with the group's ID
         window.location.href = `./addMembers.html?groupId=${group.id}`;
       });
+
       groupElement.appendChild(addButton);
+
+      // Store the selected groupId in localStorage
+      localStorage.setItem('selectedGroupId', group.id);
+      selectedGroupId = group.id;
     });
   });
 }
