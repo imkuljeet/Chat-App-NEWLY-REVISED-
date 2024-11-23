@@ -170,12 +170,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Display all groups
   await displayGroups(token);
 
-  document
-    .getElementById("getOlderMessages")
-    .addEventListener("click", async () => {
-      await fetchOlderMessages();
-      // clearInterval(setId);
-    });
+  // document
+  //   .getElementById("getOlderMessages")
+  //   .addEventListener("click", async () => {
+  //     await fetchOlderMessages();
+  //     // clearInterval(setId);
+  //   });
   // let setId = setInterval(fetchMessages, 1000);
 });
 
