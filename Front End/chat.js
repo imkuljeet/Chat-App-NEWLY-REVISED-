@@ -3,14 +3,16 @@ document.getElementById("sendMessage").addEventListener("click", async (e) => {
   await sendMessage();
 });
 
-document.getElementById("messageInput").addEventListener("keydown", async (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    await sendMessage();
-  }
-});
+document
+  .getElementById("messageInput")
+  .addEventListener("keydown", async (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      await sendMessage();
+    }
+  });
 
-document.getElementById('creategroup').addEventListener('click',()=>{
+document.getElementById("creategroup").addEventListener("click", () => {
   window.location.href = "./nameGroup.html";
 });
 
@@ -18,21 +20,20 @@ async function sendMessage() {
   let message = document.getElementById("messageInput").value;
   try {
     let token = localStorage.getItem("token");
-    let storedMsgsInLS = localStorage.getItem('messagesStored');
+    let storedMsgsInLS = localStorage.getItem("messagesStored");
     let parsedLSMsgs = JSON.parse(storedMsgsInLS) || [];
-
 
     let response = await axios.post(
       "http://localhost:3000/message/send",
       { message },
       { headers: { Authorization: token } }
     );
-     // Update the firstMsgId to the earliest message fetched
-  if (parsedLSMsgs.length > 0) {
-    let firstMsgId = parsedLSMsgs[0].id;
-    localStorage.setItem("firstMsgId", firstMsgId);
-    console.log("FIRSTMSGID set on load:", firstMsgId);
-  }
+    // Update the firstMsgId to the earliest message fetched
+    if (parsedLSMsgs.length > 0) {
+      let firstMsgId = parsedLSMsgs[0].id;
+      localStorage.setItem("firstMsgId", firstMsgId);
+      console.log("FIRSTMSGID set on load:", firstMsgId);
+    }
 
     document.getElementById("messageInput").value = ""; // Clear the input field
   } catch (err) {
@@ -60,14 +61,22 @@ async function fetchMessages() {
     if (response.status === 200) {
       let newMessages = response.data.messages;
 
-      let storedMsgsInLS = localStorage.getItem('messagesStored');
+      let storedMsgsInLS = localStorage.getItem("messagesStored");
       let parsedLSMsgs = JSON.parse(storedMsgsInLS) || [];
 
       let mergedMessages = [...parsedLSMsgs, ...newMessages];
       let latestFiveMessages = mergedMessages.slice(-5); // Only keep the latest 5 messages
 
-      localStorage.setItem("lastMsgId", newMessages.length > 0 ? newMessages[newMessages.length - 1].id : lastMsgId);
-      localStorage.setItem('messagesStored', JSON.stringify(latestFiveMessages));
+      localStorage.setItem(
+        "lastMsgId",
+        newMessages.length > 0
+          ? newMessages[newMessages.length - 1].id
+          : lastMsgId
+      );
+      localStorage.setItem(
+        "messagesStored",
+        JSON.stringify(latestFiveMessages)
+      );
 
       displayMessages(latestFiveMessages, currentUserId);
     }
@@ -100,7 +109,7 @@ async function fetchOlderMessages() {
         localStorage.setItem("firstMsgId", firstMsgId);
         console.log("FIRSTMSGID after API call:", firstMsgId);
 
-        let storedMsgsInLS = localStorage.getItem('messagesStored');
+        let storedMsgsInLS = localStorage.getItem("messagesStored");
         let parsedLSMsgs = JSON.parse(storedMsgsInLS) || [];
 
         // Merge older messages at the beginning of the list
@@ -119,7 +128,6 @@ async function fetchOlderMessages() {
   }
 }
 
-
 function displayMessages(messages, currentUserId) {
   let ul = document.getElementById("messageul");
   ul.innerHTML = ""; // Clear any existing messages
@@ -131,14 +139,17 @@ function displayMessages(messages, currentUserId) {
   } else {
     messages.forEach((message) => {
       let li = document.createElement("li");
-      li.textContent = message.userId === currentUserId ? `You: ${message.message}` : `${message.user.name}: ${message.message}`;
+      li.textContent =
+        message.userId === currentUserId
+          ? `You: ${message.message}`
+          : `${message.user.name}: ${message.message}`;
       ul.appendChild(li);
     });
   }
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  let storedMsgsInLS = localStorage.getItem('messagesStored');
+  let storedMsgsInLS = localStorage.getItem("messagesStored");
   let parsedLSMsgs = JSON.parse(storedMsgsInLS) || [];
   let token = localStorage.getItem("token");
   let decodedToken = jwt_decode(token);
@@ -155,10 +166,37 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   await fetchMessages(); // Fetch new messages from the server
+  // Display all groups
+  await displayGroups(token);
 
-  document.getElementById("getOlderMessages").addEventListener("click", async () => {
-    await fetchOlderMessages();
-    clearInterval(setId);
-  });
-  let setId = setInterval(fetchMessages, 1000);
+  document
+    .getElementById("getOlderMessages")
+    .addEventListener("click", async () => {
+      await fetchOlderMessages();
+      // clearInterval(setId);
+    });
+  // let setId = setInterval(fetchMessages, 1000);
 });
+
+async function displayGroups(token) {
+  let groups = await fetchGroups(token);
+  let groupContainer = document.getElementById("groupContainer");
+  groups.forEach((group) => {
+    let groupElement = document.createElement("div");
+    groupElement.textContent = group.groupName;
+    groupContainer.appendChild(groupElement);
+  });
+}
+
+async function fetchGroups(token) {
+  try {
+    let response = await axios.get("http://localhost:3000/group/all-groups", {
+      headers: { Authorization: token },
+    });
+    return response.data.groups;
+  } catch (err) {
+    console.error("Error fetching groups:", err);
+    return [];
+  }
+}
+

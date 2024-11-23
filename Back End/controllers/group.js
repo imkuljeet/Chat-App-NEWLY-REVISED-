@@ -62,4 +62,14 @@ const addMember = async (req, res, next) => {
     }
 };
 
-module.exports = { namegroup,addMember };
+const allGroups = async (req, res, next) => {
+    try {
+        const groups = await Group.findAll();
+        res.status(200).json({ groups });
+    } catch (error) {
+        console.error("Error fetching groups:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+module.exports = { namegroup,addMember, allGroups};
