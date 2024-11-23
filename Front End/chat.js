@@ -381,7 +381,6 @@ async function fetchAndDisplayMembers(groupId, token) {
   
   console.log("CURRENTUSER", currentUser.data.isAdmin);
   
-   
 
     members.forEach((member) => {
       console.log("MEMEBRR>>>",member);
@@ -389,10 +388,10 @@ async function fetchAndDisplayMembers(groupId, token) {
       let memberElement = document.createElement("div");
       memberElement.innerHTML = `${member.user.name} (${member.user.email})`;
 
-      if (!member.isAdmin && member.userId !== decodedToken.userId ) {
+      if (!member.isAdmin && member.userId !== decodedToken.userId && currentUser.data.isAdmin) {
         memberElement.innerHTML += `<button class="make-admin-btn">Make Admin</button><button class="remove-user-btn">Remove User</button>`;
-      }
-
+    }
+ 
       memberDiv.appendChild(memberElement);
 
       // Add event listener for "Make Admin" button
