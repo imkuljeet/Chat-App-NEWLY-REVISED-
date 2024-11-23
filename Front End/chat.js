@@ -195,6 +195,9 @@ async function displayGroups(token) {
       addButton.classList.add("add-member-button");
       addButton.addEventListener("click", () => {
         alert(`Add member to group: ${group.groupName}`);
+        
+        // Redirect to the Add Member page with the group's ID
+        window.location.href = `./addMembers.html?groupId=${group.id}`;
       });
       groupElement.appendChild(addButton);
     });
