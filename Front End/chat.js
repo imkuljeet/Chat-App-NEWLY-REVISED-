@@ -84,6 +84,9 @@ async function fetchMessages() {
       // show(messages);
       let storedMessageFromLS = localStorage.getItem('messagesStored');
       let parsedMsgs = JSON.parse(storedMessageFromLS);
+
+      let lastMsgId = parsedMsgs[parsedMsgs.length-1].id;
+      console.log("LSTMSGID" ,lastMsgId);
       show(parsedMsgs);
     }
 
