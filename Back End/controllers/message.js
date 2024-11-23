@@ -2,7 +2,6 @@ const Message = require("../models/messages");
 let User = require("../models/users");
 const Sequelize = require('sequelize');
 const { Op } = require('sequelize'); 
-// const { Message } = require('../models/messages'); // Adjust the path as necessary
 
 const sendMsg = async (req, res, next) => {
   try {
@@ -19,19 +18,6 @@ const sendMsg = async (req, res, next) => {
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
-
-// const fetchAll = async (req, res, next) => {
-//   try {
-//     // let messages = await Message.findAll();
-//     let messages = await Message.findAll({
-//       include: [{ model: User, attributes: ["name"] }],
-//     });
-//     res.status(200).json({ success: true, messages });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ success: false, error: "Internal Server Error" });
-//   }
-// };
 
 const fetchMessageByLastMsgId = async (req, res) => {
     try {
@@ -67,7 +53,7 @@ const fetchOlderMessages = async (req, res) => {
           [Op.lt]: firstmsgid // Fetch messages with id less than the firstmsgid
         }
       },
-      order: [['id', 'DESC']], // Sort by id in descending order
+      order: [['id', 'ASC']], // Sort by id in descending order
       limit: 20 // You can adjust the limit based on your requirements
     });
 

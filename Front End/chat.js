@@ -154,6 +154,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("getOlderMessages").addEventListener("click", async () => {
     await fetchOlderMessages();
+    clearInterval(setId);
   });
-  // setInterval(fetchMessages, 1000);
+  let setId = setInterval(fetchMessages, 1000);
 });
