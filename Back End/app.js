@@ -7,6 +7,7 @@ const sequelize = require("./util/database");
 const app = express();
 
 const userRoutes = require("./routes/user");
+const messageRoutes = require("./routes/message");
 
 const User = require('./models/users');
 
@@ -14,6 +15,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.use("/user", userRoutes);
+app.use("/message",messageRoutes);
 
 sequelize
   .sync()
