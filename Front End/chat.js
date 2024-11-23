@@ -260,6 +260,7 @@ async function displayGroups(token) {
 
       // Fetch and display messages for the group
       fetchAndDisplayMessages(group.id, token);
+      
     });
   });
 }
@@ -328,9 +329,17 @@ async function fetchAndDisplayMembers(groupId, token) {
 
     members.forEach((member) => {
       let memberElement = document.createElement("div");
-      memberElement.textContent = `${member.user.name} (${member.user.email})`;
+      memberElement.innerHTML = `${member.user.name} (${member.user.email})<button class="make-admin-btn">Make Admin</button>`;
       memberDiv.appendChild(memberElement);
-    });
+  
+      let makeAdminButton = memberElement.querySelector(".make-admin-btn");
+      makeAdminButton.addEventListener("click", () => {
+          // Add your code to make the member an admin here
+          console.log(`Making ${member.user.name} an admin`);
+      });
+  });
+  
+  
   } catch (err) {
     console.error("Error fetching group members:", err);
   }
