@@ -57,26 +57,31 @@ async function fetchMessages() {
       // console.log("RES MSGS>>", response.data.messages);
 
       let messages = response.data.messages;
+      let stringifiedMessages = JSON.stringify(messages);
+      localStorage.setItem('messagesStored',stringifiedMessages);
 
-      if (messages.length === 0) {
+      function show(messages) {
         let ul = document.getElementById("messageul");
-        let li = document.createElement("li");
-        li.textContent = "";
-        ul.appendChild(li);
-      } else {
-        messages.forEach((message) => {
-          // console.log("MSG----",message);
-          let ul = document.getElementById("messageul");
+        ul.innerHTML = ""; // Clear any existing messages
+      
+        if (messages.length === 0) {
           let li = document.createElement("li");
-          if (message.userId === currentUserId) {
-            li.textContent = `You : ${message.message}`;
-          } else {
-            li.textContent = `${message.user.name} : ${message.message}`;
-          }
-
+          li.textContent = "";
           ul.appendChild(li);
-        });
+        } else {
+          messages.forEach((message) => {
+            let li = document.createElement("li");
+            if (message.userId === currentUserId) {
+              li.textContent = `You : ${message.message}`;
+            } else {
+              li.textContent = `${message.user.name} : ${message.message}`;
+            }
+            ul.appendChild(li);
+          });
+        }
       }
+      
+      show(messages);
     }
 
     // console.log("Messages all are>>>>", response);
@@ -87,5 +92,5 @@ async function fetchMessages() {
 
 document.addEventListener('DOMContentLoaded',async ()=>{
   fetchMessages();
-  setInterval(fetchMessages, 1000);
+  // setInterval(fetchMessages, 1000);
 })
