@@ -3,29 +3,22 @@ document.getElementById("sendMessage").addEventListener("click", async (e) => {
   await sendMessage();
 });
 
-document
-  .getElementById("messageInput")
-  .addEventListener("keydown", async (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      await sendMessage();
-    }
-  });
+document.getElementById("messageInput").addEventListener("keydown", async (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    await sendMessage();
+  }
+});
 
 async function sendMessage() {
   let message = document.getElementById("messageInput").value;
-  // console.log(message);
-
   try {
     let token = localStorage.getItem("token");
     let response = await axios.post(
       "http://localhost:3000/message/send",
-      {
-        message,
-      },
+      { message },
       { headers: { Authorization: token } }
     );
-    // console.log("Message sent:", response.data);
     document.getElementById("messageInput").value = ""; // Clear the input field
   } catch (err) {
     console.error("Error sending message:", err);
@@ -34,7 +27,6 @@ async function sendMessage() {
 
 document.getElementById("logout").addEventListener("click", () => {
   localStorage.clear(); // Clear the local storage
-  // console.log("Local storage cleared");  // Add this line to verify it's being called
   window.location.href = "./login.html"; // Redirect to the login page
 });
 
@@ -44,59 +36,52 @@ async function fetchMessages() {
     let decodedToken = jwt_decode(token);
     let currentUserId = decodedToken.userId;
 
-    // console.log("CUR USER ID IS>>>", currentUserId);
-
+    let lastMsgId = localStorage.getItem("lastMsgId") || 0;
     let response = await axios.get(
-      "http://localhost:3000/message/fetchMessages",
+      `http://localhost:3000/message/fetchMessages?lastmsgid=${lastMsgId}`,
       { headers: { Authorization: token } }
     );
 
-    let ul = document.getElementById("messageul"); ul.innerHTML = ''; // Clear existing messages
+    let ul = document.getElementById("messageul");
+    ul.innerHTML = ""; // Clear existing messages
 
     if (response.status === 200) {
-      // console.log("RES MSGS>>", response.data.messages);
+      let newMessages = response.data.messages;
 
-      let messages = response.data.messages;
-      let stringifiedMessages = JSON.stringify(messages);
-      localStorage.setItem('messagesStored',stringifiedMessages);
+      let storedMsgsInLS = localStorage.getItem('messagesStored');
+      let parsedLSMsgs = JSON.parse(storedMsgsInLS) || [];
 
-      function show(messages) {
-        let ul = document.getElementById("messageul");
-        ul.innerHTML = ""; // Clear any existing messages
-      
-        if (messages.length === 0) {
-          let li = document.createElement("li");
-          li.textContent = "";
-          ul.appendChild(li);
-        } else {
-          messages.forEach((message) => {
-            let li = document.createElement("li");
-            if (message.userId === currentUserId) {
-              li.textContent = `You : ${message.message}`;
-            } else {
-              li.textContent = `${message.user.name} : ${message.message}`;
-            }
-            ul.appendChild(li);
-          });
-        }
-      }
-      
-      // show(messages);
-      let storedMessageFromLS = localStorage.getItem('messagesStored');
-      let parsedMsgs = JSON.parse(storedMessageFromLS);
+      let mergedMessages = [...parsedLSMsgs, ...newMessages];
 
-      let lastMsgId = parsedMsgs[parsedMsgs.length-1].id;
-      console.log("LSTMSGID" ,lastMsgId);
-      show(parsedMsgs);
+      localStorage.setItem("lastMsgId", newMessages[newMessages.length - 1].id);
+      localStorage.setItem('messagesStored', JSON.stringify(mergedMessages));
+
+      displayMessages(mergedMessages, currentUserId);
     }
-
-    // console.log("Messages all are>>>>", response);
   } catch (err) {
     console.log(err);
   }
 }
 
-document.addEventListener('DOMContentLoaded',async ()=>{
-  fetchMessages();
+function displayMessages(messages, currentUserId) {
+  let ul = document.getElementById("messageul");
+  ul.innerHTML = ""; // Clear any existing messages
+
+  if (messages.length === 0) {
+    let li = document.createElement("li");
+    li.textContent = "No messages available.";
+    ul.appendChild(li);
+  } else {
+    messages.forEach((message) => {
+      let li = document.createElement("li");
+      li.textContent = message.userId === currentUserId ? `You: ${message.message}` : `${message.user.name}: ${message.message}`;
+      ul.appendChild(li);
+    });
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await fetchMessages();
+  // Uncomment the line below to refresh messages every second
   // setInterval(fetchMessages, 1000);
-})
+});
