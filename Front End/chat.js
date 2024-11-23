@@ -201,6 +201,23 @@ async function displayGroups(token) {
     messageUl.style.display = 'none'; // Initially hide all message uls
     groupElement.appendChild(messageUl);
 
+    // Create a div for group members
+    let memberDiv = document.createElement("div");
+    memberDiv.id = `memberDiv-${group.id}`;
+    memberDiv.style.display = 'none'; // Initially hide all member divs
+    groupElement.appendChild(memberDiv);
+
+    // Create the "Show Members" button and initially hide it
+    let showMembersButton = document.createElement("button");
+    showMembersButton.textContent = "Show Members";
+    showMembersButton.classList.add("show-members-button");
+    showMembersButton.style.display = 'none'; // Initially hide the button
+    showMembersButton.addEventListener("click", async () => {
+      await fetchAndDisplayMembers(group.id, token);
+      memberDiv.style.display = 'block'; // Show the member div when button is clicked
+    });
+    groupElement.appendChild(showMembersButton);
+
     groupContainer.appendChild(groupElement);
 
     groupElement.addEventListener("click", () => {
@@ -223,13 +240,23 @@ async function displayGroups(token) {
       // Store the selected groupId in localStorage
       localStorage.setItem('selectedGroupId', group.id);
 
-      // Hide all message uls
+      // Hide all message uls and member divs
       document.querySelectorAll('.group-item ul').forEach((ul) => {
         ul.style.display = 'none';
       });
+      document.querySelectorAll('.group-item div').forEach((div) => {
+        div.style.display = 'none';
+      });
+      document.querySelectorAll('.show-members-button').forEach((button) => {
+        button.style.display = 'none';
+      });
 
-      // Show the message ul for the clicked group
+      // Show the message ul and member div for the clicked group
       messageUl.style.display = 'block';
+      memberDiv.style.display = 'block';
+
+      // Show the "Show Members" button for the clicked group
+      showMembersButton.style.display = 'block';
 
       // Fetch and display messages for the group
       fetchAndDisplayMessages(group.id, token);
@@ -286,5 +313,25 @@ function displayMessages(messages, currentUserId, groupId) {
           : `${message.user.name}: ${message.message}`;
       ul.appendChild(li);
     });
+  }
+}
+
+async function fetchAndDisplayMembers(groupId, token) {
+  try {
+    let response = await axios.get(`http://localhost:3000/group/getGroupMembers/${groupId}`, {
+      headers: { Authorization: token }
+    });
+
+    let members = response.data.groupMembers;
+    let memberDiv = document.getElementById(`memberDiv-${groupId}`);
+    memberDiv.innerHTML = ""; // Clear any existing members
+
+    members.forEach((member) => {
+      let memberElement = document.createElement("div");
+      memberElement.textContent = `${member.user.name} (${member.user.email})`;
+      memberDiv.appendChild(memberElement);
+    });
+  } catch (err) {
+    console.error("Error fetching group members:", err);
   }
 }

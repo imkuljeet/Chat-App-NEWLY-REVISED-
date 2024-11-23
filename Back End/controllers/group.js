@@ -98,5 +98,28 @@ const getGroupsByUserId = async (req, res, next) => {
   }
 };
 
+const getGroupMembers = async (req, res) => {
+    const { groupId } = req.params;
+    const userId = req.user.id; // Assuming you have middleware that sets req.user.id
 
-module.exports = { namegroup,addMember, allGroups, getGroupsByUserId };
+    try {
+        // Check if the user belongs to the group
+        const userGroup = await UserGroup.findOne({ where: { userId, groupId } });
+        if (!userGroup) {
+            return res.status(403).json({ error: "User does not belong to the group" });
+        }
+
+        // Fetch group members
+        const groupMembers = await UserGroup.findAll({
+            where: { groupId },
+            include: [{ model: User, attributes: ['id', 'name', 'email'] }]
+        });
+
+        res.status(200).json({ groupMembers });
+    } catch (error) {
+        console.error("Error fetching group members:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+module.exports = { namegroup,addMember, allGroups, getGroupsByUserId,  getGroupMembers };
