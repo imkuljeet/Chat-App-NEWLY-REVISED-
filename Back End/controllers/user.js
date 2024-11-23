@@ -28,4 +28,30 @@ const signup = async (req, res, next) => {
     }
 };
 
-module.exports = { signup };
+const login = async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
+
+        // Check if the user exists
+        const userToFind = await User.findOne({ where: { email } });
+        if (!userToFind) {
+            return res.status(404).json({ success: false, message: "User doesn't exist" });
+        }
+
+        // Compare the provided password with the stored hashed password
+        const isPasswordCorrect = await bcrypt.compare(password, userToFind.password);
+        // console.log("FOUNDEUSER", isPasswordCorrect);
+
+        if (isPasswordCorrect) {
+            res.status(200).json({ success: true, message: "User logged in successfully" });
+        } else {
+            res.status(401).json({ success: false, message: "Incorrect Password" });
+        }
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+};
+
+module.exports = { signup, login };
