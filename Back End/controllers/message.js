@@ -53,6 +53,7 @@ const fetchOlderMessages = async (req, res) => {
           [Op.lt]: firstmsgid // Fetch messages with id less than the firstmsgid
         }
       },
+      include: [{ model: User, attributes: ["name"] }],
       order: [['id', 'ASC']], // Sort by id in descending order
       limit: 20 // You can adjust the limit based on your requirements
     });
