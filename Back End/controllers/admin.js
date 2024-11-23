@@ -94,11 +94,22 @@ const deleteGroup = async (req, res, next) => {
         const { groupId } = req.params;
         console.log("GROUP ID>>>", groupId);
 
-        // Delete the group from the Group table
-        await Group.destroy({ where: { id : groupId }});
+        const userId = req.user.id;
 
-        // // Delete associated entries from the UserGroup table
-        await UserGroup.destroy({ where: { groupId }});
+        // Check if the user is an admin of the group
+        let person = await UserGroup.findOne({ where: { groupId, userId } });
+
+        if (!person || !person.isAdmin) {
+            return res.status(403).json({ message: 'You do not have permission to delete this group' });
+        }
+
+        console.log(person.isAdmin);
+
+        // Delete the group from the Group table
+        await Group.destroy({ where: { id: groupId } });
+
+        // Delete associated entries from the UserGroup table
+        await UserGroup.destroy({ where: { groupId } });
 
         // Send a success response to the client
         res.status(200).json({ message: 'Group deleted successfully' });

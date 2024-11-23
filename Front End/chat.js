@@ -203,15 +203,27 @@ async function displayGroups(token) {
     groupElement.appendChild(additionalButton);
 
     // Add event listener for the additional button
-    additionalButton.addEventListener("click", async() => {
-      try{
-        const token = localStorage.getItem('token');
-        let response = await axios.delete(`http://localhost:3000/admin/delete-group/${group.id}`,{ headers : { "Authorization" : token }});
+    additionalButton.addEventListener("click", async () => {
+      try {
+        const token = localStorage.getItem("token");
+        let response = await axios.delete(
+          `http://localhost:3000/admin/delete-group/${group.id}`,
+          {
+            headers: { Authorization: token },
+          }
+        );
 
-         alert(`${group.groupName} : ${response.data.message}`);
-
-      }catch(err){
+        alert(`${group.groupName} : ${response.data.message}`);
+      } catch (err) {
         console.log(err);
+
+        // Safely access the error message
+        const errorMessage =
+          err.response && err.response.data && err.response.data.message
+            ? err.response.data.message
+            : "An error occurred";
+
+        alert(`${group.groupName} : ${errorMessage}`);
       }
     });
 
