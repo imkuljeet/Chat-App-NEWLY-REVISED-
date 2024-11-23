@@ -79,7 +79,7 @@ async function fetchMessages() {
         JSON.stringify(latestFiveMessages)
       );
 
-      displayMessages(latestFiveMessages, currentUserId);
+      // displayMessages(latestFiveMessages, currentUserId);
     }
   } catch (err) {
     console.log(err);
@@ -129,25 +129,25 @@ async function fetchOlderMessages() {
   }
 }
 
-function displayMessages(messages, currentUserId) {
-  let ul = document.getElementById("messageul");
-  ul.innerHTML = ""; // Clear any existing messages
+// function displayMessages(messages, currentUserId) {
+//   let ul = document.getElementById("messageul");
+//   ul.innerHTML = ""; // Clear any existing messages
 
-  if (messages.length === 0) {
-    let li = document.createElement("li");
-    li.textContent = "No messages available.";
-    ul.appendChild(li);
-  } else {
-    messages.forEach((message) => {
-      let li = document.createElement("li");
-      li.textContent =
-        message.userId === currentUserId
-          ? `You: ${message.message}`
-          : `${message.user.name}: ${message.message}`;
-      ul.appendChild(li);
-    });
-  }
-}
+//   if (messages.length === 0) {
+//     let li = document.createElement("li");
+//     li.textContent = "No messages available.";
+//     ul.appendChild(li);
+//   } else {
+//     messages.forEach((message) => {
+//       let li = document.createElement("li");
+//       li.textContent =
+//         message.userId === currentUserId
+//           ? `You: ${message.message}`
+//           : `${message.user.name}: ${message.message}`;
+//       ul.appendChild(li);
+//     });
+//   }
+// }
 
 document.addEventListener("DOMContentLoaded", async () => {
   let storedMsgsInLS = localStorage.getItem("messagesStored");
@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let currentUserId = decodedToken.userId;
 
   // Display stored messages
-  displayMessages(parsedLSMsgs, currentUserId);
+  // displayMessages(parsedLSMsgs, currentUserId);
 
   // Set the firstMsgId to the earliest message fetched from local storage
   if (parsedLSMsgs.length > 0) {
@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("FIRSTMSGID set on load:", firstMsgId);
   }
 
-  await fetchMessages(); // Fetch new messages from the server
+  // await fetchMessages(); // Fetch new messages from the server
   // Display all groups
   await displayGroups(token);
 
@@ -186,9 +186,20 @@ async function displayGroups(token) {
   let groupContainer = document.getElementById("groupContainer");
 
   groups.forEach((group) => {
+    // Create a container for the group
     let groupElement = document.createElement("div");
-    groupElement.textContent = group.groupName;
     groupElement.classList.add("group-item");
+
+    // Create a header for the group name
+    let groupHeader = document.createElement("h2");
+    groupHeader.textContent = group.groupName;
+    groupElement.appendChild(groupHeader);
+
+    // Create a ul for the group's messages
+    let messageUl = document.createElement("ul");
+    messageUl.id = `messageul-${group.id}`;
+    groupElement.appendChild(messageUl);
+
     groupContainer.appendChild(groupElement);
 
     groupElement.addEventListener("click", () => {
@@ -210,8 +221,10 @@ async function displayGroups(token) {
 
       // Store the selected groupId in localStorage
       localStorage.setItem('selectedGroupId', group.id);
-      selectedGroupId = group.id;
     });
+
+    // Fetch and display messages for the group
+    fetchAndDisplayMessages(group.id, token);
   });
 }
 
@@ -224,5 +237,45 @@ async function fetchGroupsByUserId(token) {
   } catch (err) {
     console.error("Error fetching user groups:", err);
     return [];
+  }
+}
+async function fetchAndDisplayMessages(groupId, token) {
+  try {
+    let response = await axios.get(`http://localhost:3000/message/getGroupMessages/${groupId}`, {
+      headers: { Authorization: token }
+    });
+
+    let messages = response.data.messages;
+    let currentUserId = jwt_decode(token).userId; // Assuming token contains userId
+    displayMessages(messages, currentUserId, groupId);
+  } catch (err) {
+    console.error("Error fetching messages:", err);
+  }
+}
+
+function displayMessages(messages, currentUserId, groupId) {
+  let ul = document.getElementById(`messageul-${groupId}`);
+  
+  // Check if ul element exists
+  if (!ul) {
+    console.error(`Element with ID messageul-${groupId} not found`);
+    return;
+  }
+
+  ul.innerHTML = ""; // Clear any existing messages
+
+  if (messages.length === 0) {
+    let li = document.createElement("li");
+    li.textContent = "No messages available.";
+    ul.appendChild(li);
+  } else {
+    messages.forEach((message) => {
+      let li = document.createElement("li");
+      li.textContent =
+        message.userId === currentUserId
+          ? `You: ${message.message}`
+          : `${message.user.name}: ${message.message}`;
+      ul.appendChild(li);
+    });
   }
 }

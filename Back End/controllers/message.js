@@ -1,5 +1,6 @@
 const Message = require("../models/messages");
 let User = require("../models/users");
+const UserGroup = require("../models/usergroup");
 const Sequelize = require('sequelize');
 const { Op } = require('sequelize'); 
 
@@ -67,4 +68,24 @@ const fetchOlderMessages = async (req, res) => {
   }
 };
 
-module.exports = { sendMsg, fetchMessageByLastMsgId, fetchOlderMessages };
+const getAllGroupMsgs = async (req,res,next) =>{
+    const { groupId } = req.params;
+    const userId = req.user.id; // Assuming you have middleware that sets req.user.id
+  
+    try {
+      // Check if the user belongs to the group
+      const userGroup = await UserGroup.findOne({ where: { userId, groupId } });
+      if (!userGroup) {
+        return res.status(403).json({ error: "User does not belong to the group" });
+      }
+  
+      // Fetch messages for the group
+      const messages = await Message.findAll({ where: { groupId }, include: ['user'] });
+      res.status(200).json({ messages });
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+module.exports = { sendMsg, fetchMessageByLastMsgId, fetchOlderMessages, getAllGroupMsgs};
