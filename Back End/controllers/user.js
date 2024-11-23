@@ -6,10 +6,22 @@ const generateToken = (id, name) =>{
     return jwt.sign({ userId: id, name : name },'secretkey');
 };
 
+function isStringInvalid(string){
+    if(string === undefined || string.length === 0){
+        return true;
+    }else{
+        return false;
+    }
+}
+
 const signup = async (req, res, next) => {
     try {
         const { name, email, phone, password } = req.body;
 
+        if (isStringInvalid(name) || isStringInvalid(email) || isStringInvalid(password) || isStringInvalid(phone)) {
+            return res.status(400).json({ message : "Bad Parameters, Something is missing", success : false});
+        }
+    
         // Check if the user already exists
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
@@ -36,6 +48,10 @@ const signup = async (req, res, next) => {
 const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
+
+        if (isStringInvalid(email) || isStringInvalid(password)) {
+            return res.status(400).json({ message : "Bad Parameters, Something is missing", success : false});
+        }
 
         // Check if the user exists
         const userToFind = await User.findOne({ where: { email } });
