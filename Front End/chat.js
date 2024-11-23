@@ -10,6 +10,10 @@ document.getElementById("messageInput").addEventListener("keydown", async (e) =>
   }
 });
 
+document.getElementById('creategroup').addEventListener('click',()=>{
+  window.location.href = "./nameGroup.html";
+});
+
 async function sendMessage() {
   let message = document.getElementById("messageInput").value;
   try {
