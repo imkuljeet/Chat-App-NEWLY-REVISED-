@@ -17,9 +17,10 @@ document
   console.log(message);
 
   try {
+    let token = localStorage.getItem('token');
     let response = await axios.post("http://localhost:3000/message/send", {
       message,
-    });
+    },{ headers : { "Authorization" : token }});
     console.log("Message sent:", response.data);
     document.getElementById("messageInput").value = ""; // Clear the input field
   } catch (err) {

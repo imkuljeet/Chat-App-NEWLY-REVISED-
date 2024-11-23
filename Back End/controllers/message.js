@@ -5,7 +5,7 @@ const sendMsg = async (req, res, next) => {
         const { message } = req.body;
 
         console.log("MESSAGE", message);
-        await Message.create({ message });
+        await Message.create({ message , userId : req.user.id });
 
         res.status(201).json({ success: true, message: 'Message sent successfully' });
     } catch (err) {
