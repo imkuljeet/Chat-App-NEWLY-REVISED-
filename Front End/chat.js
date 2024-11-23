@@ -104,9 +104,9 @@ async function fetchOlderMessages() {
         let parsedLSMsgs = JSON.parse(storedMsgsInLS) || [];
 
         // Merge older messages at the beginning of the list
-        let mergedMessages = [...olderMessages, ...parsedLSMsgs];
+        let mergedMessages = [...olderMessages];
 
-        localStorage.setItem('messagesStored', JSON.stringify(mergedMessages));
+        // localStorage.setItem('messagesStored', JSON.stringify(mergedMessages));
 
         // Display the merged list of messages
         displayMessages(mergedMessages, currentUserId);
