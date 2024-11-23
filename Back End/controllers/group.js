@@ -1,6 +1,7 @@
 const Group = require('../models/groups');
 const UserGroup = require('../models/usergroup');
 const User = require("../models/users");
+const { Op } = require('sequelize');
 
 const namegroup = async (req, res, next) => {
     try {
@@ -72,4 +73,30 @@ const allGroups = async (req, res, next) => {
     }
 };
 
-module.exports = { namegroup,addMember, allGroups};
+
+const getGroupsByUserId = async (req, res, next) => {
+  try {
+    const userId = req.user.id; // Assuming you have middleware that sets req.userId from the token
+
+    // Find all group IDs that the user is part of
+    const userGroups = await UserGroup.findAll({ where: { userId: userId } });
+    const groupIds = userGroups.map(ug => ug.groupId);
+
+    // Find all groups that match these IDs
+    const groups = await Group.findAll({
+      where: {
+        id: {
+          [Op.in]: groupIds
+        }
+      }
+    });
+
+    res.status(200).json({ groups });
+  } catch (error) {
+    console.error("Error fetching groups:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+module.exports = { namegroup,addMember, allGroups, getGroupsByUserId };
