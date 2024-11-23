@@ -1,5 +1,10 @@
 const User = require('../models/users');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const generateToken = (id, name) =>{
+    return jwt.sign({ userId: id, name : name },'secretkey');
+};
 
 const signup = async (req, res, next) => {
     try {
@@ -43,7 +48,7 @@ const login = async (req, res, next) => {
         // console.log("FOUNDEUSER", isPasswordCorrect);
 
         if (isPasswordCorrect) {
-            res.status(200).json({ success: true, message: "User logged in successfully" });
+            res.status(200).json({ success: true, message: "User logged in successfully" ,token : generateToken(userToFind.id, userToFind.name )});
         } else {
             res.status(401).json({ success: false, message: "Incorrect Password" });
         }
