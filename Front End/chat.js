@@ -155,6 +155,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let token = localStorage.getItem("token");
   let decodedToken = jwt_decode(token);
   let currentUserId = decodedToken.userId;
+  // console.log(decodedToken);
 
   // Display stored messages
   // displayMessages(parsedLSMsgs, currentUserId);
@@ -355,6 +356,8 @@ function displayMessages(messages, currentUserId, groupId) {
 
 async function fetchAndDisplayMembers(groupId, token) {
   try {
+    let token = localStorage.getItem("token");
+    let decodedToken = jwt_decode(token);
     let response = await axios.get(
       `http://localhost:3000/group/getGroupMembers/${groupId}`,
       {
@@ -367,10 +370,12 @@ async function fetchAndDisplayMembers(groupId, token) {
     memberDiv.innerHTML = ""; // Clear any existing members
 
     members.forEach((member) => {
+      // console.log("MEMEBRR>>>",member);
+      
       let memberElement = document.createElement("div");
       memberElement.innerHTML = `${member.user.name} (${member.user.email})`;
 
-      if (!member.isAdmin) {
+      if (!member.isAdmin && member.userId !== decodedToken.userId) {
         memberElement.innerHTML += `<button class="make-admin-btn">Make Admin</button><button class="remove-user-btn">Remove User</button>`;
       }
 
