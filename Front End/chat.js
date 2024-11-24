@@ -7,7 +7,6 @@ socket.on('connect',()=>{
 })
 
 const groupId = localStorage.getItem('selectedGroupId');
-socket.emit('joinRoom', groupId);
 socket.on('recdMsg',(id)=>{
   console.log(id);
 
