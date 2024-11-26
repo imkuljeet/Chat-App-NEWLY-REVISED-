@@ -381,14 +381,38 @@ function displayMessages(messages, currentUserId, groupId) {
   } else {
     messages.forEach((message) => {
       let li = document.createElement("li");
-      li.textContent =
+
+      if (message.fileUrl) {
+        // Create a link or an image element
+        let fileElement;
+        if (/\.(jpe?g|png|gif|bmp)$/i.test(message.fileUrl)) { // Check if the file is an image
+          fileElement = document.createElement("img");
+          fileElement.src = message.fileUrl;
+          fileElement.alt = "Uploaded image";
+          fileElement.style.maxWidth = "200px"; // Adjust the image size as needed
+        } else {
+          fileElement = document.createElement("a");
+          fileElement.href = message.fileUrl;
+          fileElement.textContent = "Download File";
+          fileElement.target = "_blank"; // Open in a new tab
+        }
+
+        li.appendChild(fileElement);
+      }
+
+      let textNode = document.createTextNode(
         message.userId === currentUserId
           ? `You: ${message.message}`
-          : `${message.user.name}: ${message.message}`;
+          : `${message.user.name}: ${message.message}`
+      );
+      li.appendChild(document.createElement("br")); // Add a line break before the text
+      li.appendChild(textNode);
+
       ul.appendChild(li);
     });
   }
 }
+
 
 async function fetchAndDisplayMembers(groupId, token) {
   try {
