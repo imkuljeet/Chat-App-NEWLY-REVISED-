@@ -14,11 +14,15 @@ socket.on('recdMsg',(id)=>{
 
 })
 
-
 document.getElementById("sendMessage").addEventListener("click", async (e) => {
   e.preventDefault();
   await sendMessage();
 });
+
+// document.getElementById("sendMessage").addEventListener("click", async (e) => {
+//   e.preventDefault();
+//   await sendMessage();
+// });
 
 document
   .getElementById("messageInput")
@@ -35,22 +39,31 @@ document.getElementById("creategroup").addEventListener("click", () => {
 
 async function sendMessage() {
   let message = document.getElementById("messageInput").value;
+  let fileInput = document.getElementById("fileInput");
+  let file = fileInput.files[0];
+
   try {
     let token = localStorage.getItem("token");
     let groupId = localStorage.getItem("selectedGroupId");
     let storedMsgsInLS = localStorage.getItem("messagesStored");
     let parsedLSMsgs = JSON.parse(storedMsgsInLS) || [];
 
+    let formData = new FormData();
+    formData.append("message", message);
+    formData.append("groupId", groupId);
+    if (file) {
+      formData.append("file", file);
+    }
+
     let response = await axios.post(
       "http://localhost:3000/message/send",
-      { message, groupId },
-      { headers: { Authorization: token } }
+      formData,
+      { headers: { Authorization: token, "Content-Type": "multipart/form-data" } }
     );
-    // Update the firstMsgId to the earliest message fetched
 
-    socket.emit('send-message',message,groupId);
+    // Emit the message using socket
+    socket.emit('send-message', message, groupId);
 
-    
     if (parsedLSMsgs.length > 0) {
       let firstMsgId = parsedLSMsgs[0].id;
       localStorage.setItem("firstMsgId", firstMsgId);
@@ -58,6 +71,7 @@ async function sendMessage() {
     }
 
     document.getElementById("messageInput").value = ""; // Clear the input field
+    fileInput.value = ""; // Clear the file input field
   } catch (err) {
     console.error("Error sending message:", err);
   }
