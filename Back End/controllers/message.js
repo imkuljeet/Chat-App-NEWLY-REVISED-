@@ -1,19 +1,53 @@
+const multer = require("multer");
+const storage = multer.memoryStorage(); // Use memory storage
+const upload = multer({ storage: storage });
+
+const AWS = require('aws-sdk');
 const Message = require("../models/messages");
-let User = require("../models/users");
+const User = require("../models/users");
 const UserGroup = require("../models/usergroup");
 const Sequelize = require('sequelize');
-const { Op } = require('sequelize'); 
+const { Op } = require('sequelize');
+require('dotenv').config();
+
+AWS.config.update({
+  accessKeyId: process.env.IAM_USER_KEY,
+  secretAccessKey: process.env.IAM_USER_SECRET,
+  // region: 'us-east-1' // Adjust this to your AWS region
+});
+
+const s3 = new AWS.S3();
 
 const sendMsg = async (req, res, next) => {
   try {
-    const { message,groupId } = req.body;
+    const { message, groupId } = req.body;
+
+    if (!message && !req.file) {
+      return res.status(400).json({ success: false, error: "Message or file is required" });
+    }
+
+    let fileUrl = null;
+    if (req.file) {
+      const params = {
+        Bucket: process.env.BUCKET_NAME,
+        Key: `${Date.now()}_${req.file.originalname}`, // Unique file name
+        Body: req.file.buffer // Use buffer directly from multer
+      };
+
+      // Uploading files to the bucket
+      const s3Upload = await s3.upload(params).promise();
+      fileUrl = s3Upload.Location;
+    }
 
     console.log("MESSAGE", message);
-    await Message.create({ message, userId: req.user.id ,groupId});
+    const createdMessage = await Message.create({
+      message,
+      fileUrl,
+      userId: req.user.id,
+      groupId
+    });
 
-    res
-      .status(201)
-      .json({ success: true, message: "Message sent successfully" });
+    res.status(201).json({ success: true, message: "Message sent successfully", data: createdMessage });
   } catch (err) {
     console.error("Error sending message:", err);
     res.status(500).json({ success: false, error: "Internal Server Error" });
