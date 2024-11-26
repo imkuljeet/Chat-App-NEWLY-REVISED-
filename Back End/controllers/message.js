@@ -32,6 +32,7 @@ const sendMsg = async (req, res, next) => {
         Bucket: process.env.BUCKET_NAME,
         Key: `${Date.now()}_${req.file.originalname}`, // Unique file name
         Body: req.file.buffer // Use buffer directly from multer
+        ,ACL : 'public-read'
       };
 
       // Uploading files to the bucket
