@@ -45,6 +45,13 @@ async function sendMessage() {
   try {
     let token = localStorage.getItem("token");
     let groupId = localStorage.getItem("selectedGroupId");
+    
+    // Check if a group is selected
+    if (!groupId) {
+      alert("Please select a group first.");
+      return;
+    }
+
     let storedMsgsInLS = localStorage.getItem("messagesStored");
     let parsedLSMsgs = JSON.parse(storedMsgsInLS) || [];
 
