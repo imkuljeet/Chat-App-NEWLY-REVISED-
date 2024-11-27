@@ -1,0 +1,81 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: rgb(185, 243, 165);
+}
+
+h1 {
+    font-family: 'Lobster', cursive;
+}
+
+h2, h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+}
+
+#groupContainer, #chat-box {
+    overflow-y: auto;
+}
+
+.additional-button,
+.show-members-button,
+.add-member-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0.5rem 0;
+}
+
+.additional-button:hover,
+.show-members-button:hover,
+.add-member-button:hover {
+    background-color: #0056b3;
+}
+
+.make-admin-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0.5rem;
+}
+
+.make-admin-btn:hover {
+    background-color: #218838;
+}
+
+.remove-user-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0.5rem;
+}
+
+.remove-user-btn:hover {
+    background-color: #c82333;
+}
+
+@media (max-width: 768px) {
+    h1, h2 {
+        font-size: 1.5rem;
+    }
+
+    h4 {
+        font-size: 1.2rem;
+    }
+
+    #input-area {
+        flex-direction: column;
+    }
+
+    #input-area input[type="text"], #input-area button, #input-area input[type="file"] {
+        margin-bottom: 1rem;
+        width: 100%;
+    }
+}
