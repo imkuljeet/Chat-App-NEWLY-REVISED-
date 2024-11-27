@@ -32,4 +32,8 @@ document.getElementById("login").addEventListener("submit", async (event) => {
   function showError(message) {
     document.body.innerHTML += `<br><br>Error is - <span style="color: red;">${message}</span>`;
   }
+
+  document.getElementById('forgotpassword').addEventListener('click',()=>{
+    window.location.href = './forgotpassword.html';
+  })
   
