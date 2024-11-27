@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+require('dotenv').config();
+
 const bodyParser = require("body-parser");
 const cron = require('node-cron'); // Import node-cron
 const sequelize = require("./util/database");
@@ -48,57 +50,15 @@ User.hasMany(UserGroup, { foreignKey: "userId" });
 Group.hasMany(UserGroup, { foreignKey: "groupId" });
 
 // Cron job to move and delete messages older than 1 day
-// cron.schedule('0 0 * * *', async () => {
-//   try {
-//     const oneDayAgo = new Date(new Date() - 24 * 60 * 60 * 1000); // 24 hours ago
-
-//     // Find messages older than 1 day
-//     const oldMessages = await Message.findAll({
-//       where: {
-//         createdAt: {
-//           [Sequelize.Op.lt]: oneDayAgo
-//         }
-//       }
-//     });
-
-//     // Archive the old messages
-//     const archivedMessages = oldMessages.map(msg => ({
-//       message: msg.message,
-//       fileUrl: msg.fileUrl,
-//       userId: msg.userId,
-//       groupId: msg.groupId,
-//       createdAt: msg.createdAt
-//     }));
-//     await ArchivedChat.bulkCreate(archivedMessages);
-
-//     // Delete the old messages
-//     await Message.destroy({
-//       where: {
-//         createdAt: {
-//           [Sequelize.Op.lt]: oneDayAgo
-//         }
-//       }
-//     });
-
-//     console.log(`Archived and deleted ${oldMessages.length} messages`);
-//   } catch (err) {
-//     console.error('Error archiving messages:', err);
-//   }
-// });
-
-// const cron = require('node-cron');
-// const ArchivedChat = require('./models/archivedchat');
-
-// Cron job to move and delete messages older than 1 minute
-cron.schedule('* * * * *', async () => {
+cron.schedule('0 0 * * *', async () => {
   try {
-    const oneMinuteAgo = new Date(new Date() - 60 * 1000); // 1 minute ago
+    const oneDayAgo = new Date(new Date() - 24 * 60 * 60 * 1000); // 24 hours ago
 
-    // Find messages older than 1 minute
+    // Find messages older than 1 day
     const oldMessages = await Message.findAll({
       where: {
         createdAt: {
-          [Sequelize.Op.lt]: oneMinuteAgo
+          [Sequelize.Op.lt]: oneDayAgo
         }
       }
     });
@@ -117,7 +77,7 @@ cron.schedule('* * * * *', async () => {
     await Message.destroy({
       where: {
         createdAt: {
-          [Sequelize.Op.lt]: oneMinuteAgo
+          [Sequelize.Op.lt]: oneDayAgo
         }
       }
     });
@@ -132,7 +92,7 @@ cron.schedule('* * * * *', async () => {
 sequelize
   .sync()
   .then(() => {
-    server.listen(3000);
+    server.listen(process.env.PORT);
 
     io.on('connection', (socket) => {
       console.log("user connected");
