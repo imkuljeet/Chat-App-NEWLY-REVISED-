@@ -1,28 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-</head>
-<body>
-    <form id="login">
-        <label for="email">Your Email ID : </label>
-        <input type="email" id="email" name="email" required>
-        <label for="password">Password : </label>
-        <input type="password" id="password" name="password" required>
-        <button type="submit">Login</button>
-    </form>
-
-    <br>
-
-    <button id="forgotpassword">Forgot Password??</button>
-    <br><br>
-
-    <a href="signup.html">New User? Sign Up Here</a>
-
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login Page</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <style>
+            body {
+                background-image: url('./Images/login.jpg');
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+            #login {
+                background: rgba(255, 255, 255, 0.8); /* Slightly transparent background */
+                padding: 2rem;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+            .btn-custom {
+                background-color: #1cd912;
+                color: white;
+            }
+            .btn-custom:hover {
+                background-color: #0056b3;
+            }
+        </style>
+    </head>   
+<body class="d-flex justify-content-center align-items-center vh-100">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-4">
+                <form id="login">
+                    <h3 class="text-center mb-4">Login</h3>
+                    <div class="form-group">
+                        <label for="email">Your Email ID:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-custom btn-block">Login</button>
+                    <button type="button" id="forgotpassword" class="btn btn-link btn-block">Forgot Password?</button>
+                    <a href="signup.html" class="btn btn-link btn-block">New User? Sign Up Here</a>
+                </form>
+            </div>
+        </div>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
     <script src="login.js"></script>
-
 </body>
 </html>

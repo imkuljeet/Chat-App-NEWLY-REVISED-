@@ -4,28 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat App</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Barlow+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: rgb(185, 243, 165);
+        }
+
+        h1 {
+            font-family: 'Lobster', cursive;
+        }
+
+        h2, h4 {
+            font-family: 'Barlow Condensed', sans-serif;
+        }
+
+        #groupContainer, #chat-box {
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            h1, h2 {
+                font-size: 1.5rem;
+            }
+
+            h4 {
+                font-size: 1.2rem;
+            }
+
+            #input-area {
+                flex-direction: column;
+            }
+
+            #input-area input[type="text"], #input-area button, #input-area input[type="file"] {
+                margin-bottom: 1rem;
+                width: 100%;
+            }
+        }
+    </style>
 </head>
-<body>
-    <h1>Chat App</h1>
+<body class="container mt-5">
+    <h1 class="text-center">Chat App</h1>
 
-    <h2>Groups --- </h2>
-    <div id="groupContainer"></div>
+    <h2>Groups</h2>
+    <div id="groupContainer" class="mb-4 border p-3 rounded"></div>
 
-    <div id="chat-box">
-        <!-- <h4>Messages ---</h4> -->
-        <ul id="messageul"></ul>
-    </div>
-    <!-- <button id="getOlderMessages">Get Older Messages</button> -->
-
-    <div id="input-area">
-        <input type="text" id="messageInput" placeholder="Type here" name="messageInput">
-        <button id="sendMessage">Send</button>
-        <input type="file" id="fileInput">
+    <div id="input-area" class="mb-4 d-flex flex-column flex-md-row">
+        <input type="text" id="messageInput" class="form-control mb-2 mr-md-2" placeholder="Type here" name="messageInput">
+        <button id="sendMessage" class="btn btn-primary mb-2 mr-md-2">Send</button>
+        <input type="file" id="fileInput" class="form-control-file">
     </div>
     
-    <br><br>
-    <button id="creategroup">Create a Group</button><br><br>
-    <button id="logout">Logout</button>
+    <button id="creategroup" class="btn btn-success mb-2">Create a Group</button><br>
+    <button id="logout" class="btn btn-danger">Logout</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>

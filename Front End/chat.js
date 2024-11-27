@@ -282,7 +282,7 @@ function displayMessages(messages, currentUserId, groupId) {
           ? `You: ${message.message}`
           : `${message.user.name}: ${message.message}`
       );
-      li.appendChild(document.createElement("br")); // Add a line break before the text
+      // li.appendChild(document.createElement("br")); // Add a line break before the text
       li.appendChild(textNode);
 
       ul.appendChild(li);
