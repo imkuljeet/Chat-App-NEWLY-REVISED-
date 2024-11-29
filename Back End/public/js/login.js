@@ -34,6 +34,6 @@ document.getElementById("login").addEventListener("submit", async (event) => {
   }
 
   document.getElementById('forgotpassword').addEventListener('click',()=>{
-    window.location.href = './forgotpassword.html';
+    window.location.href = '/forgotpassword';
   })
   

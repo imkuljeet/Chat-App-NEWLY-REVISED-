@@ -24,6 +24,10 @@ router.get('/nameGroup',(req,res,next)=>{
     res.sendFile('nameGroup.html',{ root : 'views'});
 })
 
+router.get('/forgotpassword',(req,res,next)=>{
+    res.sendFile('forgotpassword.html',{ root : 'views'});
+})
+
 
 
 
