@@ -15,7 +15,7 @@ async function signup(e) {
     };
 
     // console.log(userDetails);
-    let response = await axios.post("http://localhost:3000/user/signup",userDetails);
+    let response = await axios.post("user/signup",userDetails);
 
     console.log("RESPONSE>>>>>>", response);
 

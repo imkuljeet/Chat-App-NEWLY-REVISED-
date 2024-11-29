@@ -58,7 +58,7 @@ async function sendMessage() {
     }
 
     let response = await axios.post(
-      "http://localhost:3000/message/send",
+      "message/send",
       formData,
       { headers: { Authorization: token, "Content-Type": "multipart/form-data" } }
     );
@@ -122,7 +122,7 @@ async function displayGroups(token) {
       try {
         const token = localStorage.getItem("token");
         let response = await axios.delete(
-          `http://localhost:3000/admin/delete-group/${group.id}`,
+          `admin/delete-group/${group.id}`,
           {
             headers: { Authorization: token },
           }
@@ -217,7 +217,7 @@ async function displayGroups(token) {
 }
 async function fetchGroupsByUserId(token) {
   try {
-    let response = await axios.get("http://localhost:3000/group/user-groups", {
+    let response = await axios.get("group/user-groups", {
       headers: { Authorization: token },
     });
     return response.data.groups;
@@ -230,7 +230,7 @@ async function fetchAndDisplayMessages(groupId, token) {
   try {
     const token = localStorage.getItem('token');
     let response = await axios.get(
-      `http://localhost:3000/message/getGroupMessages/${groupId}`,
+      `message/getGroupMessages/${groupId}`,
       {
         headers: { Authorization: token },
       }
@@ -298,7 +298,7 @@ async function fetchAndDisplayMembers(groupId, token) {
     let decodedToken = jwt_decode(token);
     // console.log("DECODEDTOKEM",decodedToken);
     let response = await axios.get(
-      `http://localhost:3000/group/getGroupMembers/${groupId}`,
+      `group/getGroupMembers/${groupId}`,
       {
         headers: { "Authorization": token },
       }
@@ -310,7 +310,7 @@ async function fetchAndDisplayMembers(groupId, token) {
     memberDiv.innerHTML = ""; // Clear any existing members
 
     let currentUser = await axios.get(
-      `http://localhost:3000/group/get-currentuser/${groupId}`,
+      `group/get-currentuser/${groupId}`,
       {
           headers: { "Authorization": token },
           // params: { groupId: groupId }
@@ -341,7 +341,7 @@ async function fetchAndDisplayMembers(groupId, token) {
             let groupId = localStorage.getItem("selectedGroupId");
             let token = localStorage.getItem("token");
             const response = await axios.post(
-              `http://localhost:3000/admin/make-admin`,
+              `admin/make-admin`,
               { member },
               {
                 headers: { Authorization: token },
@@ -366,7 +366,7 @@ async function fetchAndDisplayMembers(groupId, token) {
             // let groupId = localStorage.getItem("selectedGroupId");
             let token = localStorage.getItem("token");
             const response = await axios.post(
-              `http://localhost:3000/admin/remove-user`,
+              `admin/remove-user`,
               { member },
               {
                 headers: { Authorization: token },

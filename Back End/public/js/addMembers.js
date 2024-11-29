@@ -11,7 +11,7 @@ document.getElementById("add-member-form").addEventListener('submit', async (e) 
     let groupId = e.target.groupId.value;
 
     try {
-        let response = await axios.post("http://localhost:3000/group/add-member", { email, groupId }, { headers: { "Authorization": token } });
+        let response = await axios.post("group/add-member", { email, groupId }, { headers: { "Authorization": token } });
         console.log(response.data);
         alert("Member Added Successfully");
         window.location.href = ("/chat");

@@ -10,7 +10,7 @@ document.getElementById("login").addEventListener("submit", async (event) => {
     };
   
     try {
-      let response = await axios.post("http://localhost:3000/user/login", loginDetails);
+      let response = await axios.post("user/login", loginDetails);
   
       if (response.status === 200) {
         alert(response.data.message);

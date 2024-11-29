@@ -73,7 +73,7 @@ const resetpassword = async (req, res) => {
     <title>Reset Password</title>
   </head>
   <body>
-    <form action="http://localhost:3000/password/updatepassword/${id}" method="get">
+    <form action="${process.env.WEBSITE}/password/updatepassword/${id}" method="get">
       <label for="newpassword">Enter New Password : </label>
       <input type="password" name="newpassword" id="newpassword" required />
       <button type="submit">Reset Password</button>

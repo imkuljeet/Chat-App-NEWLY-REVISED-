@@ -9,7 +9,7 @@ async function forgotpassword(e) {
          email : email
         }
      
-        const response = await axios.post('http://localhost:3000/password/forgotpassword',formDetails);
+        const response = await axios.post('password/forgotpassword',formDetails);
      
         if(response.status == 200){
          document.body.innerHTML += '<div style = "color : red;">Mail Successfully Sent</div>'
