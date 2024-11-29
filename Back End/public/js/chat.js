@@ -66,12 +66,6 @@ async function sendMessage() {
     // Emit the message using socket
     socket.emit('send-message', message, groupId);
 
-    if (parsedLSMsgs.length > 0) {
-      let firstMsgId = parsedLSMsgs[0].id;
-      localStorage.setItem("firstMsgId", firstMsgId);
-      console.log("FIRSTMSGID set on load:", firstMsgId);
-    }
-
     document.getElementById("messageInput").value = ""; // Clear the input field
     fileInput.value = ""; // Clear the file input field
   } catch (err) {
