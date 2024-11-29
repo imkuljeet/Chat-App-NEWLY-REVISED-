@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Barlow+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/chat.css"> <!-- Link to external CSS -->
+</head>
+<body class="container mt-5">
+    <h1 class="text-center">Group Chat App</h1>
+
+    <h2>Groups</h2>
+    <div id="groupContainer" class="mb-4 border p-3 rounded"></div>
+
+    <div id="input-area" class="mb-4 d-flex flex-column flex-md-row">
+        <input type="text" id="messageInput" class="form-control mb-2 mr-md-2" placeholder="Type here" name="messageInput">
+        <button id="sendMessage" class="btn btn-primary mb-2 mr-md-2">Send</button>
+        <input type="file" id="fileInput" class="form-control-file">
+    </div>
+    
+    <button id="creategroup" class="btn btn-success mb-2">Create a Group</button><br>
+    <button id="logout" class="btn btn-danger">Logout</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.js"></script>
+
+    <script src="/js/chat.js"></script>
+</body>
+</html>

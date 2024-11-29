@@ -21,6 +21,7 @@ const messageRoutes = require("./routes/message");
 const groupRoutes = require("./routes/group");
 const adminRoutes = require("./routes/admin");
 const forgotPasswordRoutes = require('./routes/forgotpassword');
+const mainRoutes = require("./routes/main");
 
 const User = require("./models/users");
 const Message = require("./models/messages");
@@ -31,12 +32,14 @@ const ForgotPassword = require("./models/forgotpassword");
 
 app.use(cors({ origin: "*" }));
 app.use(bodyParser.json());
+app.use(express.static('public'));
 
 app.use("/user", userRoutes);
 app.use("/message", messageRoutes);
 app.use("/group", groupRoutes);
 app.use("/admin", adminRoutes);
 app.use('/password',forgotPasswordRoutes);
+app.use('/',mainRoutes);
 
 User.hasMany(Message, { foreignKey: "userId" });
 Message.belongsTo(User, { foreignKey: "userId" });

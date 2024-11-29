@@ -1,0 +1,55 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to right, #43cea2, #185a9d); /* Cool gradient with blue-green tones */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: white;
+  }
+  
+  .container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.2); /* Slightly lighter background for better visibility */
+    padding: 60px; /* More padding for a spacious look */
+    border-radius: 20px; /* More rounded corners for a softer appearance */
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.3); /* Enhanced shadow for a more dramatic effect */
+  }
+  
+  .button {
+    display: inline-block;
+    padding: 18px 36px; /* Slightly adjusted padding for a comfortable size */
+    margin: 12px; /* Adequate margin between buttons */
+    background-color: #3b5998; /* New button color */
+    color: white;
+    border: none;
+    border-radius: 8px; /* Smooth rounded corners */
+    text-decoration: none;
+    font-size: 16px; /* Standard font size */
+    transition: background-color 0.3s, transform 0.3s; /* Added transition for transform */
+  }
+  
+  .button:hover {
+    background-color: #2d4373; /* Darker shade on hover */
+    transform: scale(1.05); /* Slightly scales up the button on hover */
+  }
+
+  .button1 {
+    display: inline-block;
+    padding: 18px 36px; /* Slightly adjusted padding for a comfortable size */
+    margin: 12px; /* Adequate margin between buttons */
+    background-color: #22da53; /* New button color */
+    color: white;
+    border: none;
+    border-radius: 8px; /* Smooth rounded corners */
+    text-decoration: none;
+    font-size: 16px; /* Standard font size */
+    transition: background-color 0.3s, transform 0.3s; /* Added transition for transform */
+  }
+
+  .button1:hover {
+    background-color: #cce915; /* Darker shade on hover */
+    transform: scale(1.05); /* Slightly scales up the button on hover */
+  }
+  
